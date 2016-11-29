@@ -52,28 +52,7 @@ public class WsTransportServer implements TransportServer {
                             WebSocketDuplexConnection duplexConn = new WebSocketDuplexConnection(wsConn);
                             Observable<Void> connTerminate = RxReactiveStreams.toObservable(acceptor.apply(duplexConn));
 
-                            return Observable.create(subscriber -> {
-                                if (!subscriber.isUnsubscribed()) {
-                                    Subscription subscription = connTerminate.subscribe(new Observer<Void>() {
-                                        @Override
-                                        public void onCompleted() {
-                                            if (!subscriber.isUnsubscribed()) {
-                                                subscriber.onCompleted();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-
-                                        }
-
-                                        @Override
-                                        public void onNext(Void aVoid) {
-                                        }
-                                    });
-                                    subscriber.add(Subscriptions.create(subscription::unsubscribe));
-                                }
-                            });
+                            return connTerminate;
                         });
                     } else {
                         return resp.setStatus(HttpResponseStatus.NOT_FOUND);

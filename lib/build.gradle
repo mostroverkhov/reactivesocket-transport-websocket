@@ -1,7 +1,5 @@
-group 'com.github.mostroverkhov'
-version '0.5.1-SNAPSHOT'
-
 apply plugin: 'java'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
@@ -15,4 +13,48 @@ dependencies {
 
     testCompile 'io.reactivesocket:reactivesocket-test:0.5.0-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+def libVersion = '0.5.1-SNAPSHOT'
+def libGroupId = 'com.github.mostroverkhov'
+def libDeployUrl = project.repositories.mavenLocal().url
+def libScmUrl = 'https://ostroverkhov@bitbucket.org/ostroverkhov/gcm-quickiterate.git'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: libDeployUrl)
+            pom.version = libVersion
+            pom.groupId = libGroupId
+
+            pom.artifactId = 'reactive-socket-transport-websocket'
+            pom.project {
+
+                name 'WebSocket Transport for Reactive-Socket-Java'
+                packaging 'jar'
+                description 'WebSocket Transport Client and Server for Reactive-Socket-Java'
+                url libScmUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'main'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'mostroverkhov'
+                        name 'Maks Ostroverkhov'
+                    }
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from project.sourceSets.main.java.srcDirs
+    classifier = 'sources'
 }
