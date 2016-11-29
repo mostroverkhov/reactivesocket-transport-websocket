@@ -1,0 +1,18 @@
+group 'com.github.mostroverkhov'
+version '0.5.1-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.jfrog.org/libs-snapshot' }
+}
+
+dependencies {
+    compile 'io.reactivesocket:reactivesocket-core:0.5.0-SNAPSHOT'
+    compile 'io.reactivex:rxnetty-http:0.5.2-rc.5'
+    compile 'io.reactivex:rxjava-reactive-streams:1.2.0'
+
+    testCompile 'io.reactivesocket:reactivesocket-test:0.5.0-SNAPSHOT'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
