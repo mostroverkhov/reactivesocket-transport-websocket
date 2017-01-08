@@ -41,7 +41,7 @@ public class WsTransportClient implements TransportClient {
     public Publisher<DuplexConnection> connect() {
 
         Observable<DuplexConnection> wsConn = HttpClient.newClient(socketAddress)
-                .enableWireLogging("msging-client", LogLevel.DEBUG)
+                .enableWireLogging("ws-transport-client", LogLevel.DEBUG)
                 .createGet("")
                 .requestWebSocketUpgrade()
                 .flatMap(WebSocketResponse::getWebSocketConnection)

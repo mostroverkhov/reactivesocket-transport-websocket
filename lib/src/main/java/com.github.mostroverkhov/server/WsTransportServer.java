@@ -4,16 +4,11 @@ import com.github.mostroverkhov.WebSocketDuplexConnection;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.logging.LogLevel;
-import io.reactivesocket.Frame;
 import io.reactivesocket.transport.TransportServer;
 import io.reactivex.netty.protocol.http.server.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
-import rx.Observer;
 import rx.RxReactiveStreams;
-import rx.Subscription;
-import rx.subscriptions.Subscriptions;
 
 import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("Duplicates")
 public class WsTransportServer implements TransportServer {
 
-    private static final Logger logger = LoggerFactory.getLogger(Frame.class);
+    private static final Logger logger = LoggerFactory.getLogger(WsTransportServer.class);
 
     private final HttpServer<ByteBuf, ByteBuf> server;
 
@@ -46,13 +41,9 @@ public class WsTransportServer implements TransportServer {
                     logger.info("Server http request: " + req);
                     if (req.isWebSocketUpgradeRequested()) {
                         return resp.acceptWebSocketUpgrade(wsConn -> {
-
                             logger.info("Ws handler ready");
-
                             WebSocketDuplexConnection duplexConn = new WebSocketDuplexConnection(wsConn);
-                            Observable<Void> connTerminate = RxReactiveStreams.toObservable(acceptor.apply(duplexConn));
-
-                            return connTerminate;
+                            return RxReactiveStreams.toObservable(acceptor.apply(duplexConn));
                         });
                     } else {
                         return resp.setStatus(HttpResponseStatus.NOT_FOUND);

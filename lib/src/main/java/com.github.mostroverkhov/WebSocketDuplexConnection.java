@@ -3,7 +3,6 @@ package com.github.mostroverkhov;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.util.ReferenceCountUtil;
 import io.reactivesocket.DuplexConnection;
 import io.reactivesocket.Frame;
 import io.reactivex.netty.protocol.http.ws.WebSocketConnection;
@@ -54,7 +53,6 @@ public class WebSocketDuplexConnection implements DuplexConnection {
         return toPublisher(wsConn.getInput().map(wsFrame -> {
             ByteBuf content = wsFrame.content();
             try {
-
                 buffer.wrap(content);
                 frame.wrap(buffer, 0);
                 logger.info("Received RS Frame: " + frame);
