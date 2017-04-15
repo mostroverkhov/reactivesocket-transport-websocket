@@ -26,7 +26,8 @@ public class WsTransportServer implements TransportServer {
     private final HttpServer<ByteBuf, ByteBuf> server;
 
     private WsTransportServer(SocketAddress socketAddress) {
-        this.server = HttpServer.newServer(socketAddress);
+        this.server = HttpServer.newServer(socketAddress)
+                .enableWireLogging("msg-server", LogLevel.DEBUG);
     }
 
     public static WsTransportServer create(SocketAddress address) {
@@ -40,19 +41,18 @@ public class WsTransportServer implements TransportServer {
     @Override
     public StartedServer start(ConnectionAcceptor acceptor) {
 
-        server.enableWireLogging("msg-server", LogLevel.DEBUG)
-                .start((req, resp) -> {
-                    logger.info("Server http request: " + req);
-                    if (req.isWebSocketUpgradeRequested()) {
-                        return resp.acceptWebSocketUpgrade(wsConn -> {
-                            logger.info("Ws handler ready");
-                            WebSocketDuplexConnection duplexConn = new WebSocketDuplexConnection(wsConn);
-                            return RxReactiveStreams.toObservable(acceptor.apply(duplexConn));
-                        });
-                    } else {
-                        return resp.setStatus(HttpResponseStatus.NOT_FOUND);
-                    }
+        server.start((req, resp) -> {
+            logger.info("Server http request: " + req);
+            if (req.isWebSocketUpgradeRequested()) {
+                return resp.acceptWebSocketUpgrade(wsConn -> {
+                    logger.info("Ws handler ready");
+                    WebSocketDuplexConnection duplexConn = new WebSocketDuplexConnection(wsConn);
+                    return RxReactiveStreams.toObservable(acceptor.apply(duplexConn));
                 });
+            } else {
+                return resp.setStatus(HttpResponseStatus.NOT_FOUND);
+            }
+        });
 
         return new StartedServer() {
             @Override
