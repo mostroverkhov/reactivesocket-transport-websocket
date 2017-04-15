@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.RxReactiveStreams;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.TimeUnit;
 
@@ -24,13 +25,16 @@ public class WsTransportServer implements TransportServer {
 
     private final HttpServer<ByteBuf, ByteBuf> server;
 
-    public WsTransportServer(int port) {
-        server = HttpServer.newServer(port);
-
+    private WsTransportServer(SocketAddress socketAddress) {
+        this.server = HttpServer.newServer(socketAddress);
     }
 
-    public static WsTransportServer create(int port) {
-        return new WsTransportServer(port);
+    public static WsTransportServer create(SocketAddress address) {
+        return new WsTransportServer(address);
+    }
+
+    public static WsTransportServer create(String host, int port) {
+        return new WsTransportServer(new InetSocketAddress(host, port));
     }
 
     @Override

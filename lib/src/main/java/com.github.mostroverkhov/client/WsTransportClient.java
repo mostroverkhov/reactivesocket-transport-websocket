@@ -21,10 +21,6 @@ public class WsTransportClient implements TransportClient {
 
     private final SocketAddress socketAddress;
 
-    public WsTransportClient(final String host, int port) {
-        this(new InetSocketAddress(host, port));
-    }
-
     public WsTransportClient(SocketAddress address) {
         this.socketAddress = address;
     }
@@ -34,7 +30,7 @@ public class WsTransportClient implements TransportClient {
     }
 
     public static WsTransportClient create(final String host, int port) {
-        return new WsTransportClient(host, port);
+        return new WsTransportClient(new InetSocketAddress(host, port));
     }
 
     @Override

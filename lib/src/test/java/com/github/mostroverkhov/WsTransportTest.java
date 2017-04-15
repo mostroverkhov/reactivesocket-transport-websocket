@@ -17,6 +17,7 @@ import io.reactivex.Flowable;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,8 @@ import static org.junit.Assert.assertFalse;
 public class WsTransportTest {
     @Test
     public void clientServer() throws Exception {
-        WsTransportServer wsTransportServer = WsTransportServer.create(8025);
+        WsTransportServer wsTransportServer = WsTransportServer.create(
+                new InetSocketAddress("localhost", 8091));
         TransportServer.StartedServer server = ReactiveSocketServer.create(wsTransportServer)
                 .start(new SocketAcceptorImpl());
 
